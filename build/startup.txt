@@ -1,0 +1,21 @@
+.\build\RobotNavigation.exe    
+
+ & "C:\msys64\ucrt64\bin\cmake.exe" --build .\build --verbose
+
+
+
+ Write-Host "`n=== CMAKE MSYS2 ==="
+Test-Path "C:\msys64\ucrt64\bin\cmake.exe"
+if (Test-Path "C:\msys64\ucrt64\bin\cmake.exe") {
+    & "C:\msys64\ucrt64\bin\cmake.exe" --version
+}
+
+Write-Host "`n=== NINJA MSYS2 ==="
+Test-Path "C:\msys64\ucrt64\bin\ninja.exe"
+if (Test-Path "C:\msys64\ucrt64\bin\ninja.exe") {
+    & "C:\msys64\ucrt64\bin\ninja.exe" --version
+}
+
+Write-Host "`n=== CMAKE VISUAL STUDIO ==="
+Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Filter cmake.exe -Recurse -ErrorAction SilentlyContinue |
+    Select-Object -First 5 -ExpandProperty FullName

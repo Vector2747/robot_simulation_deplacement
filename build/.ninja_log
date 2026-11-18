@@ -1,0 +1,10 @@
+# ninja log v7
+4	512	8146148334745030	CMakeFiles/RobotNavigation.dir/src/main.cpp.obj	6c6501f0ffbeb146
+463	599	8146091931148736	RobotNavigation.exe	67500528de4f5d57
+3	200	8146150209256972	build.ninja	290a5a603b359c3e
+3	200	8146150209216953	C:/Users/tafou/Desktop/projects/RobotNavigation/build/cmake_install.cmake	290a5a603b359c3e
+3	511	8146098317496131	CMakeFiles/RobotNavigation2.dir/src/main_2.cpp.obj	398d2751e6609cf1
+511	668	8146098322580504	RobotNavigation2.exe	bc07423a5194567
+1	149	8146150209256972	build.ninja	290a5a603b359c3e
+1	149	8146150209256972	C:/Users/tafou/Desktop/projects/RobotNavigation/build/cmake_install.cmake	290a5a603b359c3e
+3	123	8146150209497456	RobotNavigation.exe	67500528de4f5d57

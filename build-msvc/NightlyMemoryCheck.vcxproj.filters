@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\tafou\Desktop\projects\RobotNavigation2\build-msvc\CMakeFiles\ced045060645ac45caf237d7d839acde\NightlyMemoryCheck.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\tafou\Desktop\projects\RobotNavigation2\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\tafou\Desktop\projects\RobotNavigation2\build-msvc\CMakeFiles\NightlyMemoryCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{35D3EA9D-DEDC-3FC6-9A6B-193381D53083}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

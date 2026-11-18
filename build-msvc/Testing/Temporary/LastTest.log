@@ -1,0 +1,160 @@
+Start testing: Nov 13 11:13 W. Central Africa Standard Time
+----------------------------------------------------------
+1/3 Testing: RobotNavigationTemporalTests
+1/3 Test: RobotNavigationTemporalTests
+Command: "C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc/Release/RobotNavigationTemporalTests.exe"
+Directory: C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc
+"RobotNavigationTemporalTests" start time: Nov 13 11:13 W. Central Africa Standard Time
+Output:
+----------------------------------------------------------
+INFO: D* Lite: global path computed (21 cells).
+PASS static obstacle uses global/local planning
+INFO: D* Lite: global path computed (21 cells).
+PASS moving obstacle ahead
+INFO: D* Lite: global path computed (21 cells).
+PASS rear obstacle catches robot
+INFO: D* Lite: global path computed (21 cells).
+PASS lateral obstacle
+INFO: D* Lite: global path computed (21 cells).
+PASS two converging obstacles
+INFO: D* Lite: global path computed (21 cells).
+PASS multiple dynamic obstacles in local window
+INFO: D* Lite: global path computed (36 cells).
+PASS obstacle direction change
+INFO: D* Lite: global path computed (21 cells).
+PASS no safe temporal path stops robot
+INFO: D* Lite: global path computed (21 cells).
+PASS obstacle disappearance and global-path resumption
+PASS A* detours: ahead expanded=11 rear expanded=10 passage expanded=7
+PASS temporal search waits for a crossing obstacle
+PASS blocked exact goal uses forward goal-region cell
+PASS detour near local window boundary expanded=57
+PASS diagnostics horizon=3625 nodes=839 blocked-collisions=9
+All temporal navigation tests passed.
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"RobotNavigationTemporalTests" end time: Nov 13 11:13 W. Central Africa Standard Time
+"RobotNavigationTemporalTests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: RobotNavigationMotionTests
+2/3 Test: RobotNavigationMotionTests
+Command: "C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc/Release/RobotNavigationMotionTests.exe"
+Directory: C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc
+"RobotNavigationMotionTests" start time: Nov 13 11:13 W. Central Africa Standard Time
+Output:
+----------------------------------------------------------
+PASS manual speed levels 2/4/6/8 m/s
+INFO: D* Lite: global path computed (61 cells).
+AUTO_SPEED limit=2 measured=2 m/s (peak 2)
+INFO: D* Lite: global path computed (61 cells).
+AUTO_SPEED limit=4 measured=4 m/s (peak 4)
+INFO: D* Lite: global path computed (61 cells).
+AUTO_SPEED limit=6 measured=6 m/s (peak 6)
+INFO: D* Lite: global path computed (61 cells).
+AUTO_SPEED limit=8 measured=8 m/s (peak 8)
+PASS automatic speed levels 2/4/6/8 m/s
+INFO: D* Lite: global path computed (61 cells).
+LIVE_SLIDER limit=2 measured=2 m/s
+LIVE_SLIDER limit=4 measured=4 m/s
+LIVE_SLIDER limit=6 measured=6 m/s
+LIVE_SLIDER limit=8 measured=8 m/s
+PASS live slider changes during automatic navigation
+INFO: D* Lite: global path computed (33 cells).
+PASS slow moving target max_update_ms=0.4735
+INFO: D* Lite: global path computed (41 cells).
+PASS sudden retarget max_update_ms=0.5965
+INFO: D* Lite: global path computed (9 cells).
+PASS retarget behind static obstacle max_update_ms=0.8631
+INFO: D* Lite: global path computed (41 cells).
+PASS rapid repeated retargets max_update_ms=2.2976
+INFO: D* Lite: global path computed (41 cells).
+PASS invalid destination recovery max_update_ms=0.1627
+INFO: D* Lite: global path computed (31 cells).
+PASS retarget during dynamic evasion temporal_searches=4 max_update_ms=0.6996
+INFO: D* Lite: global path computed (31 cells).
+PASS retarget during active Temporal A* max_update_ms=0.6912
+PASS blocked target wait and recovery max_update_ms=0.0979
+WARNING: D* Lite: no valid global path found.
+PASS impassable wall target transition max_update_ms=0.0566
+WARNING: D* Lite: no valid global path found.
+PASS no-path dynamic evasion max_lateral=2.07709 max_update_ms=0.04
+INFO: D* Lite: global path computed (9 cells).
+PASS repeated accessible/inaccessible targets max_update_ms=52.8323
+INFO: D* Lite: global path computed (13 cells).
+PASS target approach slows down and stops
+LOCAL_SPEED limit=2 measured=2 m/s
+LOCAL_SPEED limit=4 measured=4 m/s
+LOCAL_SPEED limit=6 measured=6 m/s
+LOCAL_SPEED limit=8 measured=8 m/s
+PASS local planner receives updated speed limits
+INFO: D* Lite: global path computed (25 cells).
+PASS static obstacle remains collision-free
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO static-left-passage reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=-1 evade_frame=-1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.7499 position=(14.7495,-0.158276) speed=0.612865 path_cells=2 longest_stop_frames=0 temporal_searches=0 trajectories=708972 segments=3370482 decision_ms=422.201 max_decision_ms=4.6671
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO static-right-passage reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=-1 evade_frame=-1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.8002 position=(14.7995,0.211237) speed=0.602635 path_cells=2 longest_stop_frames=0 temporal_searches=0 trajectories=710325 segments=3382661 decision_ms=307.482 max_decision_ms=2.1788
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO static-two-passages reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=-1 evade_frame=-1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.7952 position=(14.7944,0.217749) speed=0.619589 path_cells=2 longest_stop_frames=0 temporal_searches=0 trajectories=706266 segments=3373236 decision_ms=318.112 max_decision_ms=3.7357
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO static-narrow-passage reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=-1 evade_frame=-1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.9953 position=(14.9939,0.293461) speed=0.607273 path_cells=2 longest_stop_frames=0 temporal_searches=0 trajectories=725208 segments=3554767 decision_ms=402.381 max_decision_ms=10.7434
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO dynamic-crossing reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=2 prefix_fallbacks=0 rejected_moves=0 distance=29.7455 position=(14.7452,-0.140117) speed=0.60119 path_cells=2 longest_stop_frames=0 temporal_searches=4 trajectories=710325 segments=3503891 decision_ms=278.867 max_decision_ms=1.6564
+ lateral_switch_frames=57,60,
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO dynamic-rear-threat reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=90 evade_frame=99 lateral_switches=0 prefix_fallbacks=10 rejected_moves=0 distance=30.0872 position=(15.0858,0.286849) speed=0.361992 path_cells=1 longest_stop_frames=2 temporal_searches=7 trajectories=773619 segments=3581752 decision_ms=320.077 max_decision_ms=2.7651
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO head-on-slider-variation reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=0 prefix_fallbacks=22 rejected_moves=0 distance=29.8442 position=(14.8432,0.249931) speed=0.610143 path_cells=2 longest_stop_frames=0 temporal_searches=3 trajectories=1311255 segments=6444209 decision_ms=621.307 max_decision_ms=3.7453
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO head-on-slider-variation reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=30.0777 position=(15.0763,0.286159) speed=0.360464 path_cells=1 longest_stop_frames=0 temporal_searches=2 trajectories=742797 segments=3658004 decision_ms=319.498 max_decision_ms=1.2201
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO head-on-slider-variation reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.7421 position=(14.7418,-0.133223) speed=0.600731 path_cells=2 longest_stop_frames=0 temporal_searches=2 trajectories=501963 segments=2458974 decision_ms=182.221 max_decision_ms=0.9676
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO head-on-slider-variation reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=2 prefix_fallbacks=1 rejected_moves=0 distance=29.7421 position=(14.7417,-0.134994) speed=0.602442 path_cells=2 longest_stop_frames=0 temporal_searches=3 trajectories=434049 segments=2093191 decision_ms=172.709 max_decision_ms=1.3612
+ lateral_switch_frames=23,24,
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO converging-side-threat reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=30.0711 position=(15.0697,0.289013) speed=0.361845 path_cells=1 longest_stop_frames=0 temporal_searches=4 trajectories=749562 segments=3736883 decision_ms=369.835 max_decision_ms=5.6565
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO two-sided-convergence reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=1 evade_frame=1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.7419 position=(14.7416,-0.134108) speed=0.601875 path_cells=2 longest_stop_frames=0 temporal_searches=3 trajectories=506022 segments=2467480 decision_ms=225.089 max_decision_ms=4.1659
+INFO: D* Lite: global path computed (31 cells).
+PASS prediction cache tracks obstacle direction reversal
+INFO: D* Lite: global path computed (31 cells).
+SCENARIO temporary-blockage-removal reached=1 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=40 evade_frame=94 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=29.9927 position=(14.9912,0.296009) speed=0.612668 path_cells=2 longest_stop_frames=0 temporal_searches=1 trajectories=725208 segments=3581194 decision_ms=347.337 max_decision_ms=3.6185
+WARNING: D* Lite: no valid global path found.
+SCENARIO no-safe-passage reached=0 collision=0 first_collision_frame=-1 collision_x=(0,0) threat_frame=-1 evade_frame=-1 lateral_switches=0 prefix_fallbacks=0 rejected_moves=0 distance=0 position=(0,0) speed=0 path_cells=0 longest_stop_frames=0 temporal_searches=0 trajectories=0 segments=0 decision_ms=0 max_decision_ms=0
+All robot motion tests passed.
+<end of output>
+Test time =   7.82 sec
+----------------------------------------------------------
+Test Passed.
+"RobotNavigationMotionTests" end time: Nov 13 11:13 W. Central Africa Standard Time
+"RobotNavigationMotionTests" time elapsed: 00:00:07
+----------------------------------------------------------
+
+3/3 Testing: RobotNavigationEvilAhrTests
+3/3 Test: RobotNavigationEvilAhrTests
+Command: "C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc/Release/RobotNavigationEvilAhrTests.exe"
+Directory: C:/Users/tafou/Desktop/projects/RobotNavigation2/build-msvc
+"RobotNavigationEvilAhrTests" start time: Nov 13 11:13 W. Central Africa Standard Time
+Output:
+----------------------------------------------------------
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+INFO: D* Lite: global path computed (31 cells).
+EVIL_AHR_BENCH active_world_obstacles=200 updates=6000 average_update_us=0.0520333 total_ms=0.3122
+All Evil Ahr event tests passed.
+<end of output>
+Test time =   0.22 sec
+----------------------------------------------------------
+Test Passed.
+"RobotNavigationEvilAhrTests" end time: Nov 13 11:13 W. Central Africa Standard Time
+"RobotNavigationEvilAhrTests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 13 11:13 W. Central Africa Standard Time

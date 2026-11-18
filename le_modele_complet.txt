@@ -1,0 +1,382 @@
+Rapport technique — Architecture prévue de RobotNavigation
+Version de référence · 4 novembre 2026 · Document de cadrage avant développement
+
+L'objectif de ce rapport est de figer les décisions prises jusqu'ici pour repartir sur une base propre, sans perdre les choix d'architecture, les algorithmes envisagés ni les contraintes du projet.
+
+Principe directeur : nous conservons l'environnement graphique et les commandes manuelles de l'ancien projet, mais nous abandonnons entièrement ses anciens algorithmes de navigation. La nouvelle architecture sera construite progressivement, puis validée par des tests et des mesures.
+
+1. Objectif de cette version
+Développer une simulation de navigation autonome dans un environnement 2D représenté en 3D :
+- Le robot se déplace sur le plan X/Z.
+- Le terrain et les obstacles sont visualisés en 3D avec Raylib.
+- Le robot doit rejoindre une cible tout en évitant les obstacles.
+- Certains obstacles sont mobiles et peuvent apparaître ou disparaître.
+- La cible peut être déplacée librement par l'utilisateur.
+- La navigation doit rester réactive, sûre et économe en ressources CPU.
+Il ne s'agit donc pas simplement de trouver un chemin statique : le robot doit pouvoir réagir aux changements de son environnement pendant son déplacement.
+2. Environnement technique
+Élément	Technologie prévue
+Langage	C++17
+Compilation	MSVC
+Construction	CMake
+Visualisation 3D	Raylib
+Interface graphique	Dear ImGui
+Intégration ImGui/Raylib	rlImGui
+Dimension de navigation	2D, plan X/Z
+Fréquence d'affichage visée	60 FPS
+Contrôle local	20 à 30 Hz
+Terrain initial	400 × 400 cellules
+Taille initiale d'une cellule	1 unité
+
+Le rendu graphique et les calculs de navigation seront indépendants : une baisse ponctuelle de fréquence de calcul ne doit pas bloquer l'affichage.
+3. Modèle du robot et de l'environnement
+Robot
+
+
+
+
+
+
+
+
+
+- Modèle cinématique : omnidirectionnel.
+- Déplacement libre sur X/Z.
+- Contraintes physiques simplifiées : pas de modèle d'accélération ou de dynamique complexe pour cette version.
+- Forme visuelle : rectangle.
+- Empreinte de collision : cercle.
+- Rayon initial : 0,65 unité.
+
+
+La distinction entre apparence et collision est importante : le robot sera représenté par un rectangle, mais les calculs de sécurité utiliseront son empreinte circulaire.
+Obstacles
+
+
+
+
+
+
+
+
+
+- Forme : rectangles.
+- Orientation : fixe, sans rotation.
+- Deux catégories : statiques et mobiles.
+- Déplacement mobile : ligne droite, avec rebond aux limites du terrain.
+- Apparition et disparition possibles pendant la simulation.
+
+
+Les obstacles ne tourneront pas : c'est un choix volontaire pour limiter le coût des calculs géométriques et simplifier la détection des collisions.
+Perception et cible
+- Perception parfaite : le robot connaît les positions et dimensions exactes des obstacles.
+- Pas de bruit de capteur ni d'incertitude artificielle dans cette version.
+- La cible peut être déplacée librement à tout moment.
+- Le robot ne doit pas supposer que la cible suivra une trajectoire prévisible.
+Attention : connaître parfaitement la position actuelle d'un obstacle ne signifie pas connaître avec certitude sa position future. La prédiction des mouvements reste donc nécessaire.
+4. Architecture de navigation envisagée
+La navigation sera divisée en deux niveaux complémentaires.
+Niveau global
+Planification globale — D Lite*
+
+Calcule un chemin vers la cible sur la carte et réutilise autant que possible les calculs précédents lorsque l'environnement change.
+
+
+Niveau local
+Planification locale — contrôle prédictif des vitesses
+
+Choisit une vitesse sûre à court terme en tenant compte de la position et du mouvement prévisible des obstacles.
+
+
+Exécution
+Robot
+
+Exécute la vitesse retenue, puis recommence le cycle de décision.
+
+
+4.1 Planification globale : D* Lite
+
+
+
+
+
+
+
+
+
+Algorithme retenu comme candidat principal : D Lite.*
+
+Il est conçu pour les environnements où le coût des cases peut changer pendant la navigation.
+
+
+Pourquoi D* Lite plutôt qu'un A* classique ?
+- A* calcule un chemin à partir de la carte connue au moment du calcul.
+- Lorsqu'un obstacle change, un A* classique peut devoir recalculer le chemin.
+- D* Lite conserve des informations issues des calculs précédents et peut réparer le chemin après certaines modifications locales.
+Cela correspond bien à notre environnement : obstacles mobiles, apparition/disparition et changements de carte.
+
+Limite importante : D* Lite n'est pas automatiquement plus rapide qu'A*. Son intérêt dépend de la fréquence et de l'ampleur des modifications. Si la cible change fortement, une partie importante du calcul peut être à refaire.
+
+Nous comparerons donc D* Lite à A* sur les mêmes scénarios avant de conclure définitivement.
+4.2 Planification locale : évitement prédictif
+Le planificateur global ne suffit pas : il donne une direction générale, mais il ne garantit pas à lui seul que le robot évitera une collision immédiate avec un obstacle mobile.
+
+Nous prévoyons donc un contrôleur local fondé sur :
+1. L'échantillonnage de plusieurs vitesses candidates.
+2. La prédiction de la position future du robot.
+3. La prédiction de la position future des obstacles mobiles.
+4. La vérification géométrique des collisions sur un horizon temporel.
+5. Le choix d'une vitesse sûre qui rapproche le robot de son chemin et de sa cible.
+Une approche de type Velocity Obstacles (VO) pourra être étudiée comme filtre complémentaire. Cependant, la référence de sécurité sera la vérification prédictive géométrique des trajectoires.
+
+Cette approche est cohérente avec le modèle omnidirectionnel : le robot peut choisir librement sa direction de déplacement.
+4.3 Comportement en cas de danger
+La règle prévue est simple :
+- Si une vitesse sûre existe, le robot choisit la meilleure candidate.
+- Si aucune vitesse sûre n'existe, le robot s'arrête.
+- Il continue à surveiller l'environnement.
+- Il reprend automatiquement le déplacement dès qu'une vitesse sûre redevient disponible.
+La gestion des situations où le robot reste bloqué durablement (recovery/stuck detection) devra être définie et testée séparément.
+5. Carte et représentation de l'environnement
+La carte initialement envisagée est une grille de 400 × 400 cellules, soit 160 000 cellules.
+Paramètre	Valeur initiale
+Largeur	400 cellules
+Profondeur	400 cellules
+Taille d'une cellule	1 unité
+Surface représentée	400 × 400 unités
+Origine envisagée	(-200, -200)
+Nombre total de cellules	160 000
+
+La grille servira notamment à :
+- représenter les zones libres et occupées ;
+- calculer les coûts de déplacement ;
+- convertir les coordonnées du monde en coordonnées de grille ;
+- permettre à D* Lite de planifier son chemin.
+Point technique à respecter : la grille ne doit pas être définie par plusieurs constantes globales contradictoires. Une seule configuration du terrain devra déterminer ses dimensions, son origine et sa résolution.
+
+Une décision reste à confirmer lors de l'implémentation : lorsque l'utilisateur modifie les dimensions du terrain, celui-ci doit-il rester centré autour de l'origine (0,0) ? C'est l'option que je recommande.
+6. Gestion des obstacles mobiles
+Chaque obstacle devra au minimum posséder :
+- un identifiant stable ;
+- une position ;
+- une dimension ;
+- une vitesse sur X/Z ;
+- un état indiquant s'il est mobile ou statique.
+Le module de simulation mettra à jour les obstacles indépendamment du planificateur.
+
+La prédiction utilisera leur vitesse et les limites du terrain pour estimer leurs positions futures. Pour les obstacles qui rebondissent, la prédiction devra également prendre en compte les changements de direction.
+
+Nous éviterons de faire les calculs de prédiction dans le code de rendu : le rendu doit afficher les données calculées, pas devenir responsable de la logique de navigation.
+7. Fréquences et optimisation
+Nous avons choisi de ne pas recalculer tous les algorithmes à chaque image.
+Fonction	Fréquence ou déclenchement prévu
+Affichage 3D	60 FPS
+Mise à jour du monde	À chaque pas de simulation
+Contrôle local	20 à 30 Hz
+Planification globale	À la demande, lors d'un changement significatif
+Mise à jour de la carte	Lorsqu'un obstacle change réellement l'occupation ou le coût des cellules
+
+L'idée est de séparer trois rythmes :
+- Rendu : afficher le monde de manière fluide.
+- Contrôle local : prendre rapidement les décisions de déplacement.
+- Planification globale : recalculer uniquement lorsque c'est utile.
+Cela évite notamment de lancer D* Lite 60 fois par seconde sans raison.
+8. Architecture logicielle prévue
+Nous allons organiser le code par responsabilités. Voici la structure cible, qui sera construite progressivement.
+RobotNavigation/
+│
+├── CMakeLists.txt
+│
+├── assets/
+│
+├── src/
+│   ├── main.cpp
+│   │
+│   ├── core/
+│   │   ├── Types.h
+│   │   └── Config.h
+│   │
+│   ├── world/
+│   │   ├── Obstacle.h
+│   │   ├── World.h
+│   │   └── World.cpp
+│   │
+│   ├── input/
+│   │   ├── InputController.h
+│   │   ├── InputController.cpp
+│   │   ├── CameraController.h
+│   │   └── CameraController.cpp
+│   │
+│   ├── rendering/
+│   │   ├── WorldRenderer.h
+│   │   └── WorldRenderer.cpp
+│   │
+│   ├── interface/
+│   │   ├── Dashboard.h
+│   │   └── Dashboard.cpp
+│   │
+│   ├── simulation/
+│   │   ├── Robot.h
+│   │   ├── Robot.cpp
+│   │   ├── Simulation.h
+│   │   └── Simulation.cpp
+│   │
+│   ├── planning/
+│   │   ├── DStarLite.h
+│   │   └── DStarLite.cpp
+│   │
+│   └── navigation/
+│       ├── LocalPlanner.h
+│       ├── LocalPlanner.cpp
+│       ├── ObstaclePrediction.h
+│       └── ObstaclePrediction.cpp
+│
+└── tests/
+    ├── unit/
+    └── benchmarks/
+
+
+Rôle des modules
+Module	Responsabilité
+core	Types communs et configurations
+world	Terrain, obstacles, génération et évolution du monde
+input	Commandes manuelles et caméra
+rendering	Affichage 3D du terrain, robot et obstacles
+interface	Dashboard Dear ImGui
+simulation	État du robot et orchestration de la simulation
+planning	D* Lite et représentation de la carte
+navigation	Prédiction et évitement local
+
+Nous ne créerons pas immédiatement tous ces fichiers. Les modules planning, navigation et simulation seront ajoutés lorsque leur responsabilité sera clairement définie. Cela évitera de créer une architecture artificiellement complexe.
+9. Ce que nous conservons de l'ancien projet
+Nous conservons uniquement les éléments utiles à la visualisation et aux essais manuels :
+- La fenêtre Raylib et la caméra 3D.
+- Le terrain et son affichage.
+- Le modèle visuel du robot.
+- La cible.
+- Les obstacles statiques et mobiles.
+- Les commandes clavier pour déplacer manuellement le robot et la cible.
+- La rotation et le zoom de la caméra.
+- Le dashboard Dear ImGui.
+- Les paramètres de génération des obstacles.
+- Les informations de position et de performance.
+Nous devons également corriger quelques incohérences de l'ancien code :
+- Le curseur de vitesse doit réellement modifier la vitesse du robot.
+- Les commandes clavier doivent être ignorées lorsque l'utilisateur interagit avec ImGui.
+- Le terrain affiché doit correspondre à ses dimensions configurées.
+- L'option d'affichage de la grille doit réellement fonctionner.
+- La génération d'obstacles devra éviter de placer des obstacles sur le robot ou sur la cible.
+- Les contrôles de caméra doivent être indépendants du nombre d'images par seconde.
+10. Ce que nous supprimons définitivement de cette base
+Tout ce qui appartient aux anciens essais d'algorithmes sera supprimé, notamment :
+- L'ancienne implémentation A*.
+- L'ancien Space-Time A*.
+- Les anciennes structures TimedWaypoint.
+- Les anciennes fonctions PredictRobotPosition et Heuristic.
+- Les anciens mécanismes de temporisation et de replanification.
+- Les anciens chemins et leurs index.
+- Les anciennes prédictions visuelles partielles.
+- Les anciennes variables de conflits et de sécurité liées à ces algorithmes.
+Nous ne chercherons pas à réparer progressivement l'ancien système : nous reconstruirons les algorithmes dans des modules propres, avec des responsabilités et des tests clairement séparés.
+11. Validation scientifique et tests
+Le choix de D* Lite et du contrôleur local ne doit pas reposer uniquement sur leur réputation. Il faudra démontrer que leur combinaison fonctionne réellement dans notre simulation.
+
+Nous prévoyons plusieurs scénarios :
+Scénario	Ce que nous vérifions
+Terrain vide	Navigation directe et rapidité
+Obstacles statiques	Qualité du chemin
+Obstacle mobile	Évitement prédictif
+Apparition d'un obstacle	Réaction et replanification
+Disparition d'un obstacle	Capacité à exploiter le nouvel espace libre
+Cible déplacée	Adaptation de la planification
+Passage étroit	Sécurité et absence de blocage
+Robot encerclé	Arrêt sécurisé et reprise
+Nombreux obstacles	Performances et stabilité
+
+Algorithmes à comparer
+Nous comparerons au minimum :
+- A* classique comme référence.
+- D* Lite comme algorithme incrémental candidat.
+La comparaison se fera sur les mêmes cartes et les mêmes changements d'environnement.
+Mesures à enregistrer
+- Temps de calcul moyen et maximal.
+- Nombre de sommets explorés.
+- Nombre de mises à jour après modification de la carte.
+- Consommation mémoire.
+- Longueur du chemin.
+- Nombre de collisions.
+- Temps de réaction à l'apparition d'un obstacle.
+- Temps de réaction à un déplacement de la cible.
+- Fréquence de mise à jour du contrôleur local.
+Notre objectif n'est pas simplement d'obtenir un robot qui arrive à destination : nous voulons pouvoir expliquer et mesurer pourquoi notre architecture est efficace.
+12. Ordre de développement
+Nous allons avancer par étapes. Chaque étape doit compiler et fonctionner avant de passer à la suivante.
+1. Nettoyage du projet
+   
+   Créer la nouvelle base, supprimer les anciens algorithmes et conserver l'affichage ainsi que les commandes manuelles.
+2. Séparation des modules
+   
+   Extraire le monde, les contrôles, la caméra, le rendu et le dashboard.
+3. Validation de la simulation
+   
+   Vérifier les déplacements, les limites du terrain, les obstacles mobiles et la stabilité.
+4. Représentation de la carte
+   
+   Construire la grille, les conversions de coordonnées et la gestion de l'occupation des cellules.
+5. Implémentation de D Lite*
+   
+   Tester l'algorithme indépendamment du rendu et comparer ses résultats à A*.
+6. Prédiction des obstacles
+   
+   Construire et tester le modèle de prédiction des mouvements.
+7. Contrôleur local
+   
+   Tester les vitesses candidates et la vérification prédictive des collisions.
+8. Intégration complète
+   
+   Relier la planification globale, le contrôle local et le robot.
+9. Tests et optimisation
+   
+   Mesurer les performances, corriger les problèmes et préparer la démonstration.
+13. Décisions prises et points encore ouverts
+Voici le statut de notre architecture à ce stade.
+Sujet	Décision
+Navigation	2D sur X/Z
+Visualisation	3D avec Raylib
+Robot	Omnidirectionnel
+Forme visuelle	Rectangle
+Collision robot	Cercle
+Contraintes physiques	Simplifiées
+Obstacles	Rectangles
+Rotation des obstacles	Désactivée
+Obstacles mobiles	Oui, mouvement rectiligne avec rebond
+Apparition/disparition	Oui
+Perception	Parfaite
+Cible	Déplaçable librement
+Grille initiale	400 × 400
+Planification globale	D* Lite candidat principal
+Comparaison	A* contre D* Lite
+Planification locale	Évitement prédictif
+Velocity Obstacles	Complément éventuel
+Absence de vitesse sûre	Arrêt puis reprise automatique
+Fréquence de rendu	60 FPS
+Contrôle local	20–30 Hz
+Replanification globale	Événementielle
+
+Les sujets qui restent à définir proprement :
+1. La gestion de la récupération lorsque le robot reste bloqué.
+2. La stratégie exacte de déplacement lorsque la cible est déplacée pendant une navigation.
+3. Le choix définitif entre D* Lite et A* après les benchmarks.
+4. La résolution de grille et les paramètres de performance optimaux.
+5. La stratégie exacte d'échantillonnage des vitesses du contrôleur local.
+
+14. Conclusion : notre ligne directrice
+Nous construisons une architecture à deux niveaux :
+- D Lite* pour trouver et maintenir un chemin global dans un environnement changeant.
+- Un contrôleur local prédictif pour éviter les collisions et choisir les vitesses réellement exécutables.
+Le tout sera intégré dans une simulation C++ modulaire, avec Raylib et Dear ImGui, en séparant strictement la logique de navigation du rendu graphique.
+
+Le point essentiel : nous ne considérons pas encore les algorithmes comme validés simplement parce qu'ils sont choisis. Ils devront être testés, mesurés et comparés.
+
+Ce rapport constitue notre référence de départ pour cette nouvelle version. Il permet de reprendre le développement dans un autre chat sans dépendre des anciens essais.
+
+Prochaine étape prévue : examiner le CMakeLists.txt du clone pour préparer le nettoyage de main.cpp et établir une base compilable, sans introduire prématurément les nouveaux algorithmes.

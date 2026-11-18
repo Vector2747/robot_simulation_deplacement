@@ -1,0 +1,9 @@
+ & ".\build-msvc\Release\RobotNavigation.exe" 
+
+
+ & $cmake --build .\build-msvc --config Release  
+
+ PS C:\Users\tafou\Desktop\projects\RobotNavigation> $cmake = (Get-Command cmake.exe).Source
+PS C:\Users\tafou\Desktop\projects\RobotNavigation> Write-Host "CMake utilisé : $cmake"
+CMake utilisé : C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe
+PS C:\Users\tafou\Desktop\projects\RobotNavigation> & $cmake --build .\build-msvc --config Release

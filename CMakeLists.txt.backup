@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(RobotNavigation LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(RobotNavigation
+    src/main.cpp
+)
+
+
+
+target_link_directories(RobotNavigation PRIVATE
+    "C:/msys64/ucrt64/lib"
+)
+
+target_link_libraries(RobotNavigation PRIVATE
+    raylib
+    opengl32
+    gdi32
+    winmm
+)
+
+
+
